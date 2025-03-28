@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme {
+    --font-oswald:"Oswald","sans-serif":
+    --color-midnight:#1E1E1E
+}
