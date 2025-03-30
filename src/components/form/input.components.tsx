@@ -186,7 +186,7 @@ export const SelectInputComponent = ({
         control={control}
         render={({ field }) => (
           <>
-            <Select mode="multiple" {...field} options={options} />
+            <Select {...field} options={options} />
             <span className="text-sm italic text-red-700"> {errMsg}</span>
           </>
         )}

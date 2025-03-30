@@ -13,19 +13,31 @@ import type { UploadProps } from "antd";
 import { Button, Upload, UploadFile } from "antd";
 import { useState } from "react";
 import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+import authSvc from "../../../services/auth.service";
 
 export const Register = () => {
   const RegisterDTO = Yup.object({
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    role: "",
-    gender: "",
-    address: "",
-    phone: "",
-    image: null,
+    fullName: Yup.string().min(2).max(50).required(),
+    email: Yup.string().email().required(),
+    password: Yup.string()
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*-.])[a-zA-Z\d!@#$%^&*-.]{8,25}$/
+      )
+      .required(),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password")])
+      .required(),
+    role: Yup.string()
+      .matches(/^(customer|seller)$/)
+      .default("customer"),
+    gender: Yup.string().matches(/^(male|female|other)$/),
+    address: Yup.string(),
+    phone: Yup.string().min(10).max(25).required(),
+    image: Yup.mixed().optional(),
   });
+
   const {
     control,
     handleSubmit,
@@ -43,10 +55,24 @@ export const Register = () => {
       phone: "",
       image: null,
     },
+    resolver: yupResolver(RegisterDTO),
   });
   const data = "If you are new, please register";
-  const formSubmit = (data: any) => {
-    console.log({ data });
+
+  const formSubmit = async (data: any) => {
+    try {
+      const response = await authSvc.postRequest("/auth/register", data, {
+        file: true,
+      });
+      // const response = await axiosInstance.post("/auth/register", data, {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
+      console.log(response);
+    } catch (exception) {
+      console.log(exception);
+    }
   };
 
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -114,9 +140,9 @@ export const Register = () => {
               />
             </div>
             <div className="flex flex-col ">
-              <InputLabel htmlFor="confirm Password">Re-Password</InputLabel>
+              <InputLabel htmlFor="confirmPassword">Re-Password</InputLabel>
               <PasswordInputComponent
-                name="confirm Password"
+                name="confirmPassword"
                 control={control}
                 errMsg={errors?.confirmPassword?.message}
               />
@@ -178,13 +204,14 @@ export const Register = () => {
                 className="border broder-gray-100"
               /> */}
             </div>
-            <div>
-              <button
-                type="submit"
-                className="w-full bg-blue-500 hover:bg-blue-900 text-white py-2 rounded transition duration-300 "
+            <div className="mb-4">
+              <Button
+                disabled={isSubmitting}
+                htmlType="submit"
+                className="w-full bg-black hover:bg-blue-900 text-white py-2 rounded transition duration-300 "
               >
                 Register
-              </button>
+              </Button>
             </div>
           </form>
           <div className="mt-4 md:mt-5 text-center">
