@@ -6,11 +6,16 @@ import { Register } from "../pages/auth/register/register.page.tsx";
 import { ComingSoon } from "../components/coming-soon/coming-soon.component.tsx";
 import NotFound from "../components/errors/not-found.component.tsx";
 import AdminLayout from "../pages/layout/admin-layout.tsx";
+import ActivatePage from "../pages/auth/activate/activate.page.tsx";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     Component: LoginPage,
+  },
+  {
+    path: "/activate/:activationtoken",
+    Component: ActivatePage,
   },
   {
     path: "terms-and-conditions",
