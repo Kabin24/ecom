@@ -16,7 +16,7 @@ import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import authSvc from "../../../services/auth.service";
-import { notify } from "../../../utilities/helpers";
+import { notify, NotifyType } from "../../../utilities/helpers";
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -68,7 +68,7 @@ export const Register = () => {
       });
       notify(
         "Thank you for registration.An email has been forwarded to you registered account. Please follow the steps",
-        "success"
+        NotifyType.SUCCESS
       );
       //redirest to login
       navigate("/");
@@ -76,7 +76,10 @@ export const Register = () => {
       console.log(response);
     } catch (exception) {
       console.log(exception);
-      notify("There  was a problem while creating your account.", "error");
+      notify(
+        "There  was a problem while creating your account.",
+        NotifyType.ERROR
+      );
     }
   };
 
@@ -114,11 +117,11 @@ export const Register = () => {
       </div>
 
       {/* Second Column: Register Form */}
-      <div className="flex flex-col justify-center items-center w-full bg-gray-200  md:w-1/2 p-0 ">
-        <div className="w-full max-w-lg bg-gray-200 p-6 rounded-lg ">
+      <div className="flex flex-col justify-center items-center w-full bg-gray-200  md:w-1/2 p-8 ">
+        <div className="w-full max-w-xl bg-gray-200  shadow-lg p-6 rounded-lg  pl-6">
           <h2 className="text-xl font-semibold text-center mb-4">Register</h2>
           <form onSubmit={handleSubmit(formSubmit)}>
-            <div className="flex flex-col mb-0.5 ">
+            <div className=" ">
               <InputLabel htmlFor="fullname">Full Name:</InputLabel>
               <TextInputComponentHook
                 type={"text"}

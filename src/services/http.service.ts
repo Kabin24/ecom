@@ -22,7 +22,7 @@ abstract class HttpService {
 
         //auth bearer
         if (config.auth) {
-            let token = "";
+            const token = "";
             this.#headers = {
                 ...this.#headers,
                 Authorization: "Bearer" + token,
@@ -61,13 +61,19 @@ abstract class HttpService {
                 data,
                 this.#config
             );
+            console.log("Raw API Response:", responseData);
             return {
                 result: responseData,
                 status: status,
             };
-        } catch (exception) {
+        } catch (exception:any) {
             // todo : exception
-            console.log("Exception: ", exception);
+            // console.log("Exception: ", exception);
+            throw {
+                response:exception?.response?.data,
+                status:exception?.status
+
+            }
         }
     }
     async putRequest(url: string, data: any, config: any = {}) {

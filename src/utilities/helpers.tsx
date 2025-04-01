@@ -20,3 +20,44 @@ export const notify = (msg: string, type: NotifyType) => {
     toast(msg);
   }
 };
+
+export const setCookie = (name: string, value: string, exdays: number) => {
+  document.cookie = `${name}=${value}; expries=${new Date(
+    Date.now() + exdays * 86400000
+  )}`;
+};
+
+export const getCookie = (name: string) => {
+  const cookies = document.cookie;
+  let data: string = "";
+
+  if (cookies) {
+    const cookiesValue = cookies.split(";");
+
+    cookiesValue.map((cookie) => {
+      const [key, value] = cookie.split("=");
+      if (key === name) {
+        data = value;
+      }
+    });
+  }
+  return data;
+};
+
+//local storage , session storage
+
+export const setLocalStorage = (name: string, value: string) => {
+  localStorage.setItem(name, value);
+};
+
+export const getFromLocalstorage = (name: string) => {
+  localStorage.getItem(name);
+};
+
+export const removeFromLocalStorage = (name: string) => {
+  localStorage.removeItem(name);
+};
+
+export const flushLocalStorage = () => {
+  localStorage.clean();
+};
