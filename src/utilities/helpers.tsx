@@ -61,3 +61,18 @@ export const removeFromLocalStorage = (name: string) => {
 export const flushLocalStorage = () => {
   localStorage.clean();
 };
+export const setSessionStorage = (name: string, value: string) => {
+  sessionStorage.setItem(name, value);
+};
+
+export const getFromSessionStorage = (name: string) => {
+  sessionStorage.getItem(name);
+};
+
+export const removeFromSessionStorage = (name: string) => {
+  sessionStorage.removeItem(name);
+};
+
+export const flushSessionStorage = () => {
+  sessionStorage.clean();
+};

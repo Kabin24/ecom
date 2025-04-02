@@ -5,6 +5,7 @@ import {
   PasswordInputComponent,
   RadioInputComponent,
   SelectInputComponent,
+  SubmitButton,
   TextAreaInputComponentHook,
   TextInputComponentHook,
 } from "../../../components/form/input.components";
@@ -18,7 +19,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import authSvc from "../../../services/auth.service";
 import { notify, NotifyType } from "../../../utilities/helpers";
 
-export const Register = () => {
+const Register = () => {
   const navigate = useNavigate();
   const RegisterDTO = Yup.object({
     fullName: Yup.string().min(2).max(50).required(),
@@ -55,7 +56,7 @@ export const Register = () => {
       gender: "",
       address: "",
       phone: "",
-      image: null,
+      image: "",
     },
     resolver: yupResolver(RegisterDTO),
   });
@@ -213,13 +214,7 @@ export const Register = () => {
               /> */}
             </div>
             <div className="mb-4">
-              <Button
-                disabled={isSubmitting}
-                htmlType="submit"
-                className="w-full bg-black hover:bg-blue-900 text-white py-2 rounded transition duration-300 "
-              >
-                Register
-              </Button>
+              <SubmitButton isSubmitting={isSubmitting} />
             </div>
           </form>
           <div className="mt-4 md:mt-5 text-center">
@@ -239,3 +234,5 @@ export const Register = () => {
     </div>
   );
 };
+
+export default Register;

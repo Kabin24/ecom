@@ -61,7 +61,7 @@ abstract class HttpService {
                 data,
                 this.#config
             );
-            console.log("Raw API Response:", responseData);
+            
             return {
                 result: responseData,
                 status: status,
@@ -79,6 +79,16 @@ abstract class HttpService {
     async putRequest(url: string, data: any, config: any = {}) {
         try {
             this.#setConfig(config);
+            const { data: responseData, status } = await axiosInstance.put(
+                url,
+                data,
+                this.#config
+            );
+            
+            return {
+                result: responseData,
+                status: status,
+            };
         } catch (exception) {
             // todo : exception
             console.log("Exception: ", exception);
@@ -87,9 +97,21 @@ abstract class HttpService {
     async patchRequest(url: string, data: string, config: any = {}) {
         try {
             this.#setConfig(config);
-        } catch (exception) {
-            // todo : exception
-            console.log("Exception: ", exception);
+            const { data: responseData, status } = await axiosInstance.patch(
+                url,
+                data,
+                this.#config
+            );
+            
+            return {
+                result: responseData,
+                status: status,
+            };
+        } catch (exception:any) {
+            // todo : exception handling
+            
+           console.log(exception);
+           
         }
     }
     async deleteRequest(url: string, config: any = {}) {

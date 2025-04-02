@@ -1,7 +1,7 @@
 import React, { ChangeEventHandler, ReactNode } from "react";
-import { Input, Radio, Select } from "antd";
+import { Button, Input, Radio, Select } from "antd";
 import { Controller, useController } from "react-hook-form";
-
+import { AiOutlineSend } from "react-icons/ai";
 export interface IClassProps {
   classes?: string | null;
 }
@@ -215,5 +215,24 @@ export const TextAreaInputComponentHook = (
 
       <span className="text-sm italic  text-red-700">{props?.errMsg}</span>
     </React.Fragment>
+  );
+};
+
+interface ISendButtonProps {
+  isSubmitting?: boolean;
+}
+export const SubmitButton = ({ isSubmitting }: ISendButtonProps) => {
+  return (
+    <>
+      <Button
+        variant="solid"
+        icon={<AiOutlineSend />}
+        htmlType="submit"
+        disabled={isSubmitting}
+        className="h-10! bg-green-800! border-green-800! hover:bg-green-950! hover:border-green-900! text-white! w-full  mt-3 py-2"
+      >
+        Submit
+      </Button>
+    </>
   );
 };

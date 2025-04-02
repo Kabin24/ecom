@@ -3,6 +3,7 @@ import { GoogleOutlined } from "@ant-design/icons";
 import {
   InputLabel,
   PasswordInputComponent,
+  SubmitButton,
   TextInputComponentHook,
 } from "../../components/form/input.components.tsx";
 
@@ -27,7 +28,7 @@ const LoginPage = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
       email: "",
@@ -35,10 +36,6 @@ const LoginPage = () => {
     } as ICredentials,
     resolver: yupResolver(LoginDTO),
   });
-
-  const submitHandler = (data: ICredentials) => {
-    console.log(data);
-  };
 
   useEffect(() => {
     const currentHour = new Date().getHours();
@@ -72,7 +69,7 @@ const LoginPage = () => {
           <h2 className="text-2xl font-bold text-center mb-6 text-gray-800 font-oswald">
             Login
           </h2>
-          <form onSubmit={handleSubmit(submitHandler)}>
+          <form onSubmit={handleSubmit(login)}>
             <div className="flex flex-col mb-4 space-y-2">
               <InputLabel htmlFor="username">Username:</InputLabel>
 
@@ -99,28 +96,26 @@ const LoginPage = () => {
                 <NavLink
                   target="_blank"
                   to="/terms-and-conditions"
-                  className="text-teal-600  pr-2 underline"
+                  className="text-teal-600  pr-2 underline underline-offset-2"
                 >
                   Terms and Conditions
                 </NavLink>
               </div>
               <a
                 href="/forget-password"
-                className="text-sm text-teal-600 underline"
+                className="text-sm text-teal-600 underline underline-offset-2"
               >
                 Forgot Password?
               </a>
             </div>
             <div>
-              <button
-                type="submit"
-                className="w-full bg-blue-500 hover:bg-blue-900 text-white py-2 rounded transition duration-300 "
-              >
-                Login
-              </button>
+              <SubmitButton isSubmitting={isSubmitting} />
             </div>
-            <div className="flex justify-center m-5 ">
-              <NavLink to="/register" className="text-teal-500 underline">
+            <div className="flex justify-center m-1 ">
+              <NavLink
+                to="/register"
+                className="text-teal-900 underline underline-offset-2"
+              >
                 New user? Register Now
               </NavLink>
             </div>

@@ -1,29 +1,75 @@
-import { NavLink, useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { NavLink, useNavigate, useParams } from "react-router";
+import authSvc from "../../../services/auth.service";
 import { GoogleOutlined } from "@ant-design/icons";
+import { notify, NotifyType } from "../../../utilities/helpers";
+import { useForm } from "react-hook-form";
 import {
   InputLabel,
+  PasswordInputComponent,
   SubmitButton,
-  TextInputComponentHook,
 } from "../../../components/form/input.components";
-import { useAuth } from "../../../context/auth.context";
-import { useForm } from "react-hook-form";
 
-const ForgetPassword = () => {
+const ResetPassword = () => {
+  const params = useParams();
+  const [token, setToken] = useState<string>("");
   const navigate = useNavigate();
-  const { forgetPasswordReq } = useAuth();
+
   const {
     control,
     formState: { errors, isSubmitting },
     handleSubmit,
+    setValue,
   } = useForm({
     defaultValues: {
-      email: "",
+      token: "",
+      password: "",
+      confirmPassword: "",
     },
   });
-  const submitEvent = async (data: { email: string }) => {
-    await forgetPasswordReq(data);
-    navigate("/");
+  const submitFormEvent = async (data: {
+    token: string;
+    password: string;
+    confirmPassword: string;
+  }) => {
+    try {
+      await authSvc.patchRequest("/auth/reset-password", data);
+      notify(
+        "Your password  has been reset . please login",
+        NotifyType.SUCCESS
+      );
+      navigate("/");
+    } catch (exception) {
+      console.log(exception);
+
+      notify("sorry password  cannot be reset", NotifyType.ERROR);
+    }
   };
+
+  const verifyToken = async () => {
+    try {
+      const frogetPasswordToken = params.forgetToken;
+      const { result }: any = await authSvc.getRequest(
+        "/auth/verify-token/" + frogetPasswordToken
+      );
+
+      //
+      setToken(result.data.verifyToken);
+      setValue("token", result.data.verifyToken);
+    } catch (exception) {
+      console.log(exception);
+
+      notify(
+        "Sorry! Token cannot be verified ! Please try again",
+        NotifyType.ERROR
+      );
+      navigate("/forget-password");
+    }
+  };
+
+  useEffect(() => {
+    verifyToken();
+  }, []);
   return (
     <>
       <div className="flex flex-col md:flex-row h-screen w-full">
@@ -51,26 +97,33 @@ const ForgetPassword = () => {
         <div className="flex items-center justify-center bg-mignight w-full md:w-1/2 p-4 ">
           <div className="w-full max-w-xl  bg-gray-100 shadow-lg rounded-lg p-6">
             <h2 className="text-2xl  font-bold text-center mb-6 text-gray-800 font-oswald">
-              Forget Password
+              Reset Password
             </h2>
             <form
-              onSubmit={handleSubmit(submitEvent)}
-              className="flex flex-col mb-2 "
+              onSubmit={handleSubmit(submitFormEvent)}
+              className="flex flex-col gap-5"
             >
               <div>
-                <InputLabel htmlFor="username">Username:</InputLabel>
-
-                <TextInputComponentHook
+                <InputLabel htmlFor="password">Password</InputLabel>
+                <PasswordInputComponent
+                  name="password"
                   control={control}
-                  name="email"
-                  type="email"
-                  errMsg={errors?.email?.message}
+                  errMsg={errors?.password?.message}
                 />
               </div>
               <div>
-                <SubmitButton isSubmitting={isSubmitting}></SubmitButton>
+                <InputLabel htmlFor="confirmPassword">Re-Password</InputLabel>
+                <PasswordInputComponent
+                  name="confirmPassword"
+                  control={control}
+                  errMsg={errors?.confirmPassword?.message}
+                />
+              </div>
+              <div>
+                <SubmitButton isSubmitting={isSubmitting} />
               </div>
             </form>
+
             <div className="flex flex-col gap-3  text-center">
               <p className=" text-sm  text-black">
                 New User ?{" "}
@@ -105,4 +158,4 @@ const ForgetPassword = () => {
   );
 };
 
-export default ForgetPassword;
+export default ResetPassword;

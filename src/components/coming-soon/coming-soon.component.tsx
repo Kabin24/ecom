@@ -1,4 +1,4 @@
-export const ComingSoon = () => {
+const ComingSoon = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 text-white px-4">
       <h1 className="text-5xl font-bold mb-4">Coming Soon 🚀</h1>
@@ -14,3 +14,5 @@ export const ComingSoon = () => {
     </div>
   );
 };
+
+export default ComingSoon;
