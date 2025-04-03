@@ -13,8 +13,10 @@ import {
 import Sider from "antd/es/layout/Sider";
 import { Divider, Menu } from "antd";
 import { NavLink } from "react-router";
+import { useAuth } from "../../context/auth.context";
 
 const AdminSidebar = ({ collapsed }: { collapsed: boolean }) => {
+  const { loggedInUser } = useAuth();
   return (
     <>
       <Sider
@@ -28,12 +30,15 @@ const AdminSidebar = ({ collapsed }: { collapsed: boolean }) => {
         <div className="demo-logo-vertical flex flex-col  text-center justify-center mb-4">
           <div className="flex justify-center mt-2">
             <img
-              src="https://placehold.co/85x85"
+              src={
+                loggedInUser?.image?.optimizedUrl ||
+                "https://placehold.co/85x85"
+              }
               className="rounded-full w-20 p-2"
               alt=""
             />
           </div>
-          <p className="text-white">Kabin Shrestha</p>
+          <p className="text-white">{loggedInUser?.name}</p>
         </div>
         <Divider className="bg-gray-800" />
 

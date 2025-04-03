@@ -10,11 +10,13 @@ import {
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { ICredentials, useAuth } from "../../context/auth.context.tsx";
+import { notify, NotifyType } from "../../utilities/helpers.tsx";
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const { login, loggedInUser } = useAuth();
+  const navigate = useNavigate();
   const [greeting, setGreeting] = useState("");
 
   //validation rule
@@ -36,6 +38,21 @@ const LoginPage = () => {
     } as ICredentials,
     resolver: yupResolver(LoginDTO),
   });
+  const submitLogin = async (data: ICredentials) => {
+    try {
+      const user: any = await login(data);
+      navigate("/" + user.role);
+    } catch (exception) {
+      notify("sorry cnnot login at this  moment", NotifyType.ERROR);
+    }
+  };
+
+  // if already loggedin
+  useEffect(() => {
+    if (loggedInUser && loggedInUser.role) {
+      navigate("/" + loggedInUser.role);
+    }
+  }, [loggedInUser]);
 
   useEffect(() => {
     const currentHour = new Date().getHours();
@@ -69,7 +86,7 @@ const LoginPage = () => {
           <h2 className="text-2xl font-bold text-center mb-6 text-gray-800 font-oswald">
             Login
           </h2>
-          <form onSubmit={handleSubmit(login)}>
+          <form onSubmit={handleSubmit(submitLogin)}>
             <div className="flex flex-col mb-4 space-y-2">
               <InputLabel htmlFor="username">Username:</InputLabel>
 

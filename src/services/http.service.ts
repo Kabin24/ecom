@@ -1,5 +1,6 @@
 import axiosInstance from "../config/axios.config";
 
+
 abstract class HttpService {
     #headers: any = {};
     #params: any = {};
@@ -21,13 +22,14 @@ abstract class HttpService {
         }
 
         //auth bearer
-        if (config.auth) {
-            const token = "";
-            this.#headers = {
-                ...this.#headers,
-                Authorization: "Bearer" + token,
-            };
-        }
+        // if (config.auth) {
+        //     const token = getFromLocalstorage("accessToken");
+        //     this.#headers = {
+        //         ...this.#headers,
+        //      '   Authorization': "Bearer" + token,
+        //     };
+        // }
+        
         //params
         if (config.params) {
             this.#params = config.params;

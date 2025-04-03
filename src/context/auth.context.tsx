@@ -1,7 +1,20 @@
-import { createContext, useContext } from "react";
+import {
+  createContext,
+  Suspense,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import authSvc from "../services/auth.service.tsx";
-import { notify, NotifyType, setLocalStorage } from "../utilities/helpers";
+import {
+  getFromLocalstorage,
+  notify,
+  NotifyType,
+  setLocalStorage,
+} from "../utilities/helpers";
 import { WebStorageConstant } from "../config/constants";
+import { useNavigate } from "react-router";
+import { Spin } from "antd";
 
 export interface ICredentials {
   email: string;
@@ -11,12 +24,42 @@ export interface ICredentials {
 export interface IAuthProviderProps {
   children: any;
 }
+
+export interface IUserData {
+  address: string;
+  createdAt: Date;
+  email: string;
+  image: {
+    url: string;
+    optimizedUrl: string;
+  };
+  name: string;
+  phone: string;
+  role: string;
+  status: string;
+  _id: string;
+}
 export const AuthContext = createContext({
-  login: async (credentials: ICredentials): Promise<void> => {},
+  login: async (credentials: ICredentials) => {},
   forgetPasswordReq: async (_data: { email: string }): Promise<void> => {},
+  loggedInUser: {} as IUserData,
+  setLoggedInUser: (_user: IUserData) => {},
 });
 
 export const AuthProvider = ({ children }: IAuthProviderProps) => {
+  const [loggedInUser, setLoggedInUser] = useState<IUserData>();
+
+  const getLoggedInUser = async () => {
+    try {
+      const userInfo = await authSvc.getRequest("/auth/me");
+      setLoggedInUser(userInfo?.result.data);
+
+      return userInfo?.result.data;
+    } catch (exception) {
+      console.error("Error:", exception);
+    }
+  };
+
   const loginFunc = async (credentials: ICredentials) => {
     try {
       const response = await authSvc.postRequest("/auth/login", credentials);
@@ -31,26 +74,10 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
         response.result.data.refreshToken
       );
 
-      //   setSessionStorage(
-      //     WebStorageConstant.ACCESS_TOKEN,
-      //     response.result.data.accessToken
-      //   );
-      //   setSessionStorage(
-      //     WebStorageConstant.REFRESH_TOKEN,
-      //     response.result.data.refreshToken
-      //   );
-      //   setCookie(
-      //     WebStorageConstant.ACCESS_TOKEN,
-      //     response.result.data.accessToken,
-      //     1
-      //   );
-      //   setCookie(
-      //     WebStorageConstant.REFRESH_TOKEN,
-      //     response.result.data.refreshToken,
-      //     1
-      //   );
+      return await getLoggedInUser();
     } catch (exception: any) {
       notify(exception.response.message, NotifyType.ERROR);
+      throw exception;
     }
   };
 
@@ -66,15 +93,28 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
     }
   };
 
+  useEffect(() => {
+    const token = getFromLocalstorage(WebStorageConstant.ACCESS_TOKEN);
+    if (token) {
+      getLoggedInUser();
+    }
+  }, []);
+
   return (
-    <AuthContext.Provider
-      value={{
-        login: loginFunc,
-        forgetPasswordReq,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <>
+      <Suspense fallback={<Spin fullscreen></Spin>}>
+        <AuthContext.Provider
+          value={{
+            login: loginFunc,
+            forgetPasswordReq,
+            loggedInUser: loggedInUser as IUserData,
+            setLoggedInUser,
+          }}
+        >
+          {children}
+        </AuthContext.Provider>
+      </Suspense>
+    </>
   );
 };
 export const useAuth = () => {

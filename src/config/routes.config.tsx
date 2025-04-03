@@ -23,7 +23,11 @@ const ResetPassword = lazy(
 export const router = createBrowserRouter([
   {
     path: "/",
-    Component: LoginPage,
+    element: (
+      <Suspense fallback={<Spin fullscreen></Spin>}>
+        <LoginPage></LoginPage>
+      </Suspense>
+    ),
   },
   {
     path: "/activate/:activationtoken",
@@ -61,6 +65,7 @@ export const router = createBrowserRouter([
         path: "banner",
         Component: ComingSoon,
       },
+
       {
         path: "*",
         Component: NotFound,

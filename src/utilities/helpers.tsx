@@ -50,8 +50,8 @@ export const setLocalStorage = (name: string, value: string) => {
   localStorage.setItem(name, value);
 };
 
-export const getFromLocalstorage = (name: string) => {
-  localStorage.getItem(name);
+export const getFromLocalstorage = (name: string): string | null => {
+  return localStorage.getItem(name);
 };
 
 export const removeFromLocalStorage = (name: string) => {
