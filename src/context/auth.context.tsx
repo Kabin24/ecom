@@ -73,6 +73,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
         WebStorageConstant.REFRESH_TOKEN,
         response.result.data.refreshToken
       );
+      notify(response.result.message, NotifyType.SUCCESS);
 
       return await getLoggedInUser();
     } catch (exception: any) {

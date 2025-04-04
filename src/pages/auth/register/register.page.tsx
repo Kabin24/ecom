@@ -206,12 +206,6 @@ const Register = () => {
               <Upload {...props}>
                 <Button icon={<UploadOutlined />}> Select File</Button>
               </Upload>
-              {/* <input
-                type="file"
-                name="image"
-                accept="image/*"
-                className="border broder-gray-100"
-              /> */}
             </div>
             <div className="mb-4">
               <SubmitButton isSubmitting={isSubmitting} />

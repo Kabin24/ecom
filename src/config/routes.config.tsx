@@ -22,7 +22,9 @@ const ResetPassword = lazy(
 );
 
 const BannerList = lazy(() => import("../pages/banner/banner-list.page.tsx"));
-
+const BannerCreate = lazy(
+  () => import("../pages/banner/banner-create.page.tsx")
+);
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -67,6 +69,10 @@ export const router = createBrowserRouter([
       {
         path: "banner",
         Component: BannerList,
+      },
+      {
+        path: "banner/create",
+        Component: BannerCreate,
       },
 
       {

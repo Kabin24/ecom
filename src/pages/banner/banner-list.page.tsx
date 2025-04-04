@@ -18,7 +18,11 @@ const BannerList = () => {
       title: "Status",
       dataIndex: "status",
       render: (value: string) => (
-        <Button variant="filled" color={value === "active" ? "green" : "red"}>
+        <Button
+          variant="filled"
+          className="bg-red-700"
+          color={value === "active" ? "green" : "red"}
+        >
           {value === "active" ? "Published" : "Un-Published"}
         </Button>
       ),
@@ -91,7 +95,7 @@ const BannerList = () => {
   return (
     <>
       <Content className="bg-white! m-5 p-5">
-        <div className="flex justify-between border-b-gray-300">
+        <div className="flex justify-between border-b border-b-gray-200 ">
           <Typography.Title className="text-teal-700! underline underline-offset-4">
             Banner List
           </Typography.Title>

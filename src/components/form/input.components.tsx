@@ -1,7 +1,8 @@
-import React, { ChangeEventHandler, ReactNode } from "react";
-import { Button, Input, Radio, Select } from "antd";
+import React, { ChangeEventHandler, ReactNode, useState } from "react";
+import { Button, Input, Radio, Select, Upload } from "antd";
 import { Controller, useController } from "react-hook-form";
-import { AiOutlineSend } from "react-icons/ai";
+import type { UploadProps, UploadFile } from "antd";
+import { AiOutlineClose, AiOutlineSend, AiOutlineUpload } from "react-icons/ai";
 export interface IClassProps {
   classes?: string | null;
 }
@@ -40,6 +41,11 @@ export interface ITextAreaInputProps extends IInputProps {
 
 export interface ISelectInput extends IRadioInput {
   isMultiple?: boolean;
+}
+
+export interface IFileUploaderProps {
+  name: string;
+  setValue: (name: string, file: any) => void;
 }
 export const TextInputComponent = (props: Readonly<ITextInput>) => {
   return (
@@ -233,6 +239,67 @@ export const SubmitButton = ({ isSubmitting }: ISendButtonProps) => {
       >
         Submit
       </Button>
+    </>
+  );
+};
+
+export const CancelButton = ({ isSubmitting }: ISendButtonProps) => {
+  return (
+    <>
+      <Button
+        variant="solid"
+        icon={<AiOutlineClose />}
+        htmlType="reset"
+        disabled={isSubmitting}
+        className="h-10! bg-red-800! border-red-800! hover:bg-red-950! hover:border-red-900! text-white! w-full  mt-3 py-2"
+      >
+        Cancel
+      </Button>
+    </>
+  );
+};
+export const SingleImageUploader = ({ name, setValue }: IFileUploaderProps) => {
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const props: UploadProps = {
+    onRemove: (file) => {
+      const index = fileList.indexOf(file);
+      const newFileList = fileList.slice();
+      newFileList.splice(index, 1);
+      setFileList(newFileList);
+    },
+    beforeUpload: (file) => {
+      setFileList([file]);
+      setValue(name, file as any);
+      return false;
+    },
+    fileList,
+  };
+  return (
+    <>
+      <div className="flex">
+        <div className="w-1/4">
+          <Upload {...props} className="text-black!">
+            <Button icon={<AiOutlineUpload />}> Select File</Button>
+          </Upload>
+        </div>
+        <div className="w-3/4">
+          {fileList && fileList.length ? (
+            <>
+              <img
+                src={URL.createObjectURL(fileList[0] as any)}
+                className="  h-[75px] "
+                alt=""
+              />
+            </>
+          ) : (
+            <img
+              src="https://placehold.co/300x75/orange/white?text=Upload Image"
+              alt=""
+            />
+          )}
+        </div>
+      </div>
     </>
   );
 };

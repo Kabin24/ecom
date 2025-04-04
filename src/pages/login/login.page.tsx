@@ -41,6 +41,7 @@ const LoginPage = () => {
   const submitLogin = async (data: ICredentials) => {
     try {
       const user: any = await login(data);
+      notify("Welcome back!", NotifyType.SUCCESS);
       navigate("/" + user.role);
     } catch (exception) {
       notify("sorry cnnot login at this  moment", NotifyType.ERROR);
