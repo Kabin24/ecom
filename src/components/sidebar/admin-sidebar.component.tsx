@@ -30,18 +30,15 @@ const AdminSidebar = ({ collapsed }: { collapsed: boolean }) => {
         <div className="demo-logo-vertical flex flex-col  text-center justify-center mb-4">
           <div className="flex justify-center mt-2">
             <img
-              src={
-                loggedInUser?.image?.optimizedUrl ||
-                "https://placehold.co/85x85"
-              }
-              className="rounded-full w-20 p-2"
+              src={loggedInUser?.image?.url || "https://placehold.co/85x85"}
+              className="rounded-full h-20 w-20 p-2"
               alt=""
             />
           </div>
           <p className="text-white">{loggedInUser?.name}</p>
         </div>
-        <Divider className="bg-gray-800" />
 
+        <Divider className="bg-gray-800" />
         <Menu
           theme="dark"
           mode="inline"

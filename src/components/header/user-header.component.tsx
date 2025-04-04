@@ -88,10 +88,7 @@ const UserHeader = ({
           <a onClick={(e) => e.preventDefault()}>
             <Space>
               <img
-                src={
-                  loggedInUser?.image?.optimizedUrl ||
-                  "https://placehold.co/35x35"
-                }
+                src={loggedInUser?.image?.url || "https://placehold.co/35x35"}
                 className="rounded-full w-10 h-10 bg-teal-100 p-0.5 shadow-xl"
                 alt="user image"
               />

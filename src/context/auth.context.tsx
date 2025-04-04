@@ -13,7 +13,7 @@ import {
   setLocalStorage,
 } from "../utilities/helpers";
 import { WebStorageConstant } from "../config/constants";
-import { useNavigate } from "react-router";
+
 import { Spin } from "antd";
 
 export interface ICredentials {

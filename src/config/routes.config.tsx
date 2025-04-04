@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import { lazy, Suspense } from "react";
 import { Spin } from "antd";
+
 const LoginPage = lazy(() => import("../pages/login/login.page.tsx"));
 const ForgetPassword = lazy(
   () => import("../pages/auth/forget-password/forget-password.page.tsx")
@@ -19,6 +20,8 @@ const ActivatePage = lazy(
 const ResetPassword = lazy(
   () => import("../pages/auth/forget-password/reset-password.page.tsx")
 );
+
+const BannerList = lazy(() => import("../pages/banner/banner-list.page.tsx"));
 
 export const router = createBrowserRouter([
   {
@@ -63,7 +66,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "banner",
-        Component: ComingSoon,
+        Component: BannerList,
       },
 
       {
