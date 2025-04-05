@@ -1,37 +1,69 @@
-import { Typography, Input, Table, Button, Popconfirm } from "antd";
+import { Typography, Input, Table, Popconfirm } from "antd";
 import { Content } from "antd/es/layout/layout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from "react-icons/ai";
 import { NavLink } from "react-router";
+import { notify, NotifyType } from "../../utilities/helpers";
+import bannerSvc from "../../services/banner.service";
+import { IResponseType } from "../../services/http.service";
+import {
+  IGetAllBannerProps,
+  PaginationType,
+} from "../../contracts/https-contracts";
+import { bannerColumns, IBannerData } from "./banner.contract";
 
 const BannerList = () => {
-  const bannerColumns = [
-    {
-      title: "Title",
-      dataIndex: "title",
-    },
-    {
-      title: "Url",
-      dataIndex: "url",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      render: (value: string) => (
-        <Button
-          variant="filled"
-          className="bg-red-700"
-          color={value === "active" ? "green" : "red"}
-        >
-          {value === "active" ? "Published" : "Un-Published"}
-        </Button>
-      ),
-    },
-    {
-      title: "Image",
-      dataIndex: "image",
-    },
-    {
+  const [data, setData] = useState<Array<IBannerData>>();
+  const [loading, setloading] = useState<boolean>(true);
+  const [paginationData, setPaginationData] = useState<PaginationType>({
+    total: 0,
+    pageSize: 10,
+    current: 1,
+  });
+  const [search, setSearch] = useState<string>();
+
+  const handleTableChange = async (pagination: PaginationType) => {
+    await getAllBanner({
+      limit: pagination.pageSize,
+      page: pagination.current,
+    });
+  };
+
+  const getAllBanner = async ({
+    page = paginationData.current,
+    limit = paginationData.pageSize,
+    search = null,
+  }: IGetAllBannerProps) => {
+    setloading(true);
+    try {
+      const { result }: IResponseType = await bannerSvc.getRequest("/banner", {
+        params: {
+          limit: limit,
+          page: page,
+          search: search,
+        },
+      });
+      setData(result.data as Array<IBannerData>);
+      setPaginationData({
+        total: result.options.total,
+        pageSize: result.options.limit,
+        current: result.options.page,
+      });
+
+      setloading(false);
+    } catch (exception) {
+      notify("Banner cannot  be fetch at this momemt", NotifyType.ERROR);
+      setloading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllBanner({
+      page: paginationData.current,
+      limit: paginationData.pageSize,
+    });
+
+    bannerColumns.push({
       title: "Actions",
       dataIndex: "id",
       render: (value: string) => {
@@ -57,6 +89,20 @@ const BannerList = () => {
                 cancelButtonProps={{
                   className: "bg-red-800! text-white! border-red-800! text-sm!",
                 }}
+                onConfirm={async (e) => {
+                  try {
+                    e?.preventDefault();
+                    await bannerSvc.deleteRequest("/banner/" + value);
+                    notify("banner  deleted ", NotifyType.SUCCESS);
+                    getAllBanner({ page: 1, limit: paginationData.pageSize });
+                  } catch (exception) {
+                    notify(
+                      "banner cannot be deleted at this momemt",
+                      NotifyType.ERROR
+                    );
+                    throw exception;
+                  }
+                }}
               >
                 <span
                   className={
@@ -70,28 +116,21 @@ const BannerList = () => {
           </>
         );
       },
-    },
-  ];
+    });
+  }, []);
 
-  const [data, setData] = useState<Array<any>>([
-    {
-      id: "",
-      title: "Baner",
-      url: "",
-      status: "",
-      image: { publicUrl: "", optimizeUrl: "" },
-      createdAt: "",
-      updatedAt: "",
-    },
-  ]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      getAllBanner({
+        page: paginationData.current,
+        limit: paginationData.pageSize,
+        search: search,
+      });
+    }, 300);
 
-  type PaginationType = {
-    total: number;
-    pageSize: number;
-    current: number;
-  };
+    return () => clearTimeout(timer);
+  }, [search]);
 
-  const handleTableChange = (pagination: PaginationType) => {};
   return (
     <>
       <Content className="bg-white! m-5 p-5">
@@ -109,9 +148,14 @@ const BannerList = () => {
             <AiOutlinePlus /> Add Banner
           </NavLink>
         </div>
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 mt-5">
           <div className="w-1/4">
-            <Input.Search placeholder="Enter your search keyword..." />
+            <Input.Search
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+              placeholder="Enter your search keyword..."
+            />
           </div>
 
           <div>
@@ -119,12 +163,9 @@ const BannerList = () => {
               size="small"
               columns={bannerColumns}
               dataSource={data}
+              loading={loading}
               rowKey={(record) => record.id}
-              pagination={{
-                total: 100,
-                pageSize: 10,
-                current: 1,
-              }}
+              pagination={paginationData}
               onChange={handleTableChange}
             />
           </div>

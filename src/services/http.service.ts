@@ -1,5 +1,16 @@
 import axiosInstance from "../config/axios.config";
 
+export  interface IResult{
+    data?:any,
+    error?:any,
+    options:any,
+    status:string
+
+}
+export interface IResponseType {
+    result:IResult,
+    status:number
+}
 
 abstract class HttpService {
     #headers: any = {};
@@ -40,7 +51,7 @@ abstract class HttpService {
         };
     }
 
-    async getRequest(url: string, config: any = {}) {
+    async getRequest(url: string, config: any = {}):Promise <IResponseType>{
         try {
             this.#setConfig(config);
             const { data, status } = await axiosInstance.get(url, this.#config)
@@ -49,12 +60,17 @@ abstract class HttpService {
                 status: status
             }
         }
-        catch (exception) {
+        catch (exception:any) {
             // todo : exception
             console.log("Exception: ", exception);
+            throw {
+                response:exception?.response?.data,
+                status:exception?.status
+
+            }
         }
     }
-    async postRequest(url: string, data: any, config: any = {}) {
+    async postRequest(url: string, data: any, config: any = {}):Promise<IResponseType> {
         try {
             //sets the headers and params
             this.#setConfig(config);
@@ -78,7 +94,7 @@ abstract class HttpService {
             }
         }
     }
-    async putRequest(url: string, data: any, config: any = {}) {
+    async putRequest(url: string, data: any, config: any = {}):Promise<IResponseType> {
         try {
             this.#setConfig(config);
             const { data: responseData, status } = await axiosInstance.put(
@@ -91,12 +107,17 @@ abstract class HttpService {
                 result: responseData,
                 status: status,
             };
-        } catch (exception) {
+        } catch (exception:any) {
             // todo : exception
             console.log("Exception: ", exception);
+            throw {
+                response:exception?.response?.data,
+                status:exception?.status
+
+            }
         }
     }
-    async patchRequest(url: string, data: string, config: any = {}) {
+    async patchRequest(url: string, data: string, config: any = {}):Promise<IResponseType >{
         try {
             this.#setConfig(config);
             const { data: responseData, status } = await axiosInstance.patch(
@@ -113,15 +134,34 @@ abstract class HttpService {
             // todo : exception handling
             
            console.log(exception);
+           throw {
+            response:exception?.response?.data,
+            status:exception?.status
+
+        }
            
         }
     }
-    async deleteRequest(url: string, config: any = {}) {
+    async deleteRequest(url: string, config: any = {}):Promise<IResponseType> 
+    {
         try {
             this.#setConfig(config);
-        } catch (exception) {
+            const {data:responseData , status} = await axiosInstance.delete(
+                url,this.#config
+            )
+            return {
+                result:responseData,
+                status:status
+            }
+
+        } catch (exception:any) {
             // todo : exception
             console.log("Exception: ", exception);
+            throw {
+                response:exception?.response?.data,
+                status:exception?.status
+
+            }
         }
     }
 }
