@@ -4,16 +4,16 @@ import { useEffect, useState } from "react";
 import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from "react-icons/ai";
 import { NavLink } from "react-router";
 import { notify, NotifyType } from "../../utilities/helpers";
-import bannerSvc from "../../services/banner.service";
+import brandSvc from "../../services/brand.service";
 import { IResponseType } from "../../services/http.service";
 import {
   IGetAllBannerProps,
   PaginationType,
 } from "../../contracts/https-contracts";
-import { bannerColumns, IBannerData } from "./banner.contract";
+import { brandColumns, IBrandData } from "./brand.contract";
 
-const BannerList = () => {
-  const [data, setData] = useState<Array<IBannerData>>();
+const BrandList = () => {
+  const [data, setData] = useState<Array<IBrandData>>();
   const [loading, setloading] = useState<boolean>(true);
   const [paginationData, setPaginationData] = useState<PaginationType>({
     total: 0,
@@ -23,27 +23,27 @@ const BannerList = () => {
   const [search, setSearch] = useState<string>();
 
   const handleTableChange = async (pagination: PaginationType) => {
-    await getAllBanner({
+    await getAllBrand({
       limit: pagination.pageSize,
       page: pagination.current,
     });
   };
 
-  const getAllBanner = async ({
+  const getAllBrand = async ({
     page = paginationData.current,
     limit = paginationData.pageSize,
     search = null,
   }: IGetAllBannerProps) => {
     setloading(true);
     try {
-      const { result }: IResponseType = await bannerSvc.getRequest("/banner", {
+      const { result }: IResponseType = await brandSvc.getRequest("/brand", {
         params: {
           limit: limit,
           page: page,
           search: search,
         },
       });
-      setData(result.data as Array<IBannerData>);
+      setData(result.data as Array<IBrandData>);
       setPaginationData({
         total: result.options.total,
         pageSize: result.options.limit,
@@ -52,26 +52,26 @@ const BannerList = () => {
 
       setloading(false);
     } catch (exception) {
-      notify("Banner cannot  be fetch at this momemt", NotifyType.ERROR);
+      notify("Brand cannot  be fetch at this momemt", NotifyType.ERROR);
       setloading(false);
     }
   };
 
   useEffect(() => {
-    getAllBanner({
+    getAllBrand({
       page: paginationData.current,
       limit: paginationData.pageSize,
     });
-    if (bannerColumns.length === 4) {
-      bannerColumns.push({
+    if (brandColumns.length === 4) {
+      brandColumns.push({
         title: "Actions",
-        dataIndex: "id",
+        dataIndex: "_id",
         render: (value: string) => {
           return (
             <>
               <div className="flex gap-2">
                 <NavLink
-                  to={"/admin/banner/" + value}
+                  to={"/admin/brand/" + value}
                   className={
                     "flex w-8 h-8 bg-teal-800! rounded-full text-white! items-center justify-center hover:bg-teal-900!"
                   }
@@ -93,12 +93,12 @@ const BannerList = () => {
                   onConfirm={async (e) => {
                     try {
                       e?.preventDefault();
-                      await bannerSvc.deleteRequest("/banner/" + value);
-                      notify("banner  deleted ", NotifyType.SUCCESS);
-                      getAllBanner({ page: 1, limit: paginationData.pageSize });
+                      await brandSvc.deleteRequest("/brand/" + value);
+                      notify("brand  deleted ", NotifyType.SUCCESS);
+                      getAllBrand({ page: 1, limit: paginationData.pageSize });
                     } catch (exception) {
                       notify(
-                        "banner cannot be deleted at this momemt",
+                        "brand cannot be deleted at this momemt",
                         NotifyType.ERROR
                       );
                       throw exception;
@@ -123,7 +123,7 @@ const BannerList = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      getAllBanner({
+      getAllBrand({
         page: paginationData.current,
         limit: paginationData.pageSize,
         search: search,
@@ -138,16 +138,16 @@ const BannerList = () => {
       <Content className="bg-white! m-5 p-5">
         <div className="flex justify-between border-b border-b-gray-200 ">
           <Typography.Title className="text-teal-700! underline underline-offset-4">
-            Banner List
+            Brand List
           </Typography.Title>
 
           <NavLink
-            to={"/admin/banner/create"}
+            to={"/admin/brand/create"}
             className={
               "flex gap-1 items-center justify-center bg-teal-700! p-1.5 h-10 text-white! rounded-md hover:bg-teal-900!"
             }
           >
-            <AiOutlinePlus /> Add Banner
+            <AiOutlinePlus /> Add Brand
           </NavLink>
         </div>
         <div className="flex flex-col gap-5 mt-5">
@@ -163,12 +163,13 @@ const BannerList = () => {
           <div>
             <Table
               size="small"
-              columns={bannerColumns}
+              columns={brandColumns}
               dataSource={data}
               loading={loading}
-              rowKey={(record) => record.id}
+              rowKey={(record) => record._id}
               pagination={paginationData}
               onChange={handleTableChange}
+              scroll={{ y: 600 }}
             />
           </div>
         </div>
@@ -177,4 +178,4 @@ const BannerList = () => {
   );
 };
 
-export default BannerList;
+export default BrandList;

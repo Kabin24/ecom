@@ -48,8 +48,10 @@ export const AuthContext = createContext({
 
 export const AuthProvider = ({ children }: IAuthProviderProps) => {
   const [loggedInUser, setLoggedInUser] = useState<IUserData>();
+  const [loading, setLoading] = useState<boolean>(true);
 
   const getLoggedInUser = async () => {
+    setLoading(true);
     try {
       const userInfo = await authSvc.getRequest("/auth/me");
       setLoggedInUser(userInfo?.result.data);
@@ -57,6 +59,8 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
       return userInfo?.result.data;
     } catch (exception) {
       console.error("Error:", exception);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,6 +102,8 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
     const token = getFromLocalstorage(WebStorageConstant.ACCESS_TOKEN);
     if (token) {
       getLoggedInUser();
+    } else {
+      setLoading(false);
     }
   }, []);
 
@@ -112,7 +118,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
             setLoggedInUser,
           }}
         >
-          {children}
+          {loading ? <Spin fullscreen> </Spin> : children}
         </AuthContext.Provider>
       </Suspense>
     </>

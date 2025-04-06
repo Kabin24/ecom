@@ -11,21 +11,22 @@ import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Spin } from "antd";
 import { useEffect, useState } from "react";
-export interface IBannerData {
+export interface IBrandData {
   title: string;
   status: string;
-  url: string;
+  data: string;
+
   image: any;
 }
-interface IBannerFormProps {
-  submitEvent: (data: IBannerData) => Promise<void>;
-  banner?: IBannerData;
+interface IBrandFormProps {
+  submitEvent: (data: IBrandData) => Promise<void>;
+  brand?: IBrandData;
 }
 
-const BannerForm = ({ submitEvent, banner }: IBannerFormProps) => {
-  const BannerValidatorDTO = Yup.object({
+const BrandForm = ({ submitEvent, brand }: IBrandFormProps) => {
+  const BrandValidatorDTO = Yup.object({
     title: Yup.string().min(3).max(100).required(),
-    url: Yup.string().default(""),
+
     status: Yup.string()
       .matches(/^(active|inactive)$/)
       .default("inactive"),
@@ -42,10 +43,10 @@ const BannerForm = ({ submitEvent, banner }: IBannerFormProps) => {
     defaultValues: {
       title: "",
       status: "",
-      url: "",
+
       image: "",
     },
-    resolver: yupResolver(BannerValidatorDTO),
+    resolver: yupResolver(BrandValidatorDTO),
     resetOptions: {
       keepValues: false,
       keepErrors: false,
@@ -55,13 +56,13 @@ const BannerForm = ({ submitEvent, banner }: IBannerFormProps) => {
   });
 
   useEffect(() => {
-    if (banner) {
-      setValue("title", banner?.title);
-      setValue("url", banner?.url);
-      setValue("status", banner?.status);
-      setThumbnail(banner?.image?.optimizeUrl);
+    if (brand) {
+      setValue("title", brand?.title);
+
+      setValue("status", brand?.status);
+      setThumbnail(brand?.image?.optimizeUrl);
     }
-  }, [banner]);
+  }, [brand]);
   return (
     <>
       {isSubmitting ? <Spin fullscreen></Spin> : <></>}
@@ -91,22 +92,6 @@ const BannerForm = ({ submitEvent, banner }: IBannerFormProps) => {
 
         <div className="flex ">
           <div className="w-full md:w-1/4">
-            <InputLabel classes={"text-black!"} htmlFor="url">
-              Url:
-            </InputLabel>
-          </div>
-
-          <div className="w-full md:w-3/4">
-            <TextInputComponentHook
-              control={control}
-              name="url"
-              type="url"
-              errMsg={errors?.url?.message}
-            />
-          </div>
-        </div>
-        <div className="flex ">
-          <div className="w-full md:w-1/4">
             <InputLabel classes={"text-black!"} htmlFor="status">
               Status:
             </InputLabel>
@@ -134,7 +119,7 @@ const BannerForm = ({ submitEvent, banner }: IBannerFormProps) => {
               name={"image"}
               thumbnail={thumbnail}
               setValue={(name: string, file: any) =>
-                setValue(name as keyof IBannerData, file)
+                setValue(name as keyof IBrandData, file)
               }
             />
           </div>
@@ -151,4 +136,4 @@ const BannerForm = ({ submitEvent, banner }: IBannerFormProps) => {
     </>
   );
 };
-export default BannerForm;
+export default BrandForm;

@@ -25,6 +25,10 @@ const BannerList = lazy(() => import("../pages/banner/banner-list.page.tsx"));
 const BannerCreate = lazy(
   () => import("../pages/banner/banner-create.page.tsx")
 );
+const BrandEdit = lazy(() => import("../pages/brand/brand-edit.page.tsx"));
+const BrandList = lazy(() => import("../pages/brand/brand-list.page.tsx"));
+const BrandCreate = lazy(() => import("../pages/brand/brand-create.page.tsx"));
+const BannerEdit = lazy(() => import("../pages/brand/brand-edit.page.tsx"));
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -73,6 +77,22 @@ export const router = createBrowserRouter([
       {
         path: "banner/create",
         Component: BannerCreate,
+      },
+      {
+        path: "banner/:id",
+        Component: BannerEdit,
+      },
+      {
+        path: "brand",
+        Component: BrandList,
+      },
+      {
+        path: "brand/create",
+        Component: BrandCreate,
+      },
+      {
+        path: "brand/:id",
+        Component: BrandEdit,
       },
 
       {

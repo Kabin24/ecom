@@ -46,6 +46,7 @@ export interface ISelectInput extends IRadioInput {
 export interface IFileUploaderProps {
   name: string;
   setValue: (name: string, file: any) => void;
+  thumbnail?: string;
 }
 export const TextInputComponent = (props: Readonly<ITextInput>) => {
   return (
@@ -258,7 +259,11 @@ export const CancelButton = ({ isSubmitting }: ISendButtonProps) => {
     </>
   );
 };
-export const SingleImageUploader = ({ name, setValue }: IFileUploaderProps) => {
+export const SingleImageUploader = ({
+  name,
+  setValue,
+  thumbnail,
+}: IFileUploaderProps) => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const props: UploadProps = {
@@ -288,9 +293,13 @@ export const SingleImageUploader = ({ name, setValue }: IFileUploaderProps) => {
             <>
               <img
                 src={URL.createObjectURL(fileList[0] as any)}
-                className="  h-[75px] "
+                className="  h-[100px] "
                 alt=""
               />
+            </>
+          ) : thumbnail ? (
+            <>
+              <img src={thumbnail} className="h-[100px]" alt="" />
             </>
           ) : (
             <img
