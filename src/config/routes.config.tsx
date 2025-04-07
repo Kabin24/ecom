@@ -21,6 +21,7 @@ const ResetPassword = lazy(
   () => import("../pages/auth/forget-password/reset-password.page.tsx")
 );
 
+const BannerEdit = lazy(() => import("../pages/brand/brand-edit.page.tsx"));
 const BannerList = lazy(() => import("../pages/banner/banner-list.page.tsx"));
 const BannerCreate = lazy(
   () => import("../pages/banner/banner-create.page.tsx")
@@ -28,7 +29,9 @@ const BannerCreate = lazy(
 const BrandEdit = lazy(() => import("../pages/brand/brand-edit.page.tsx"));
 const BrandList = lazy(() => import("../pages/brand/brand-list.page.tsx"));
 const BrandCreate = lazy(() => import("../pages/brand/brand-create.page.tsx"));
-const BannerEdit = lazy(() => import("../pages/brand/brand-edit.page.tsx"));
+
+const ChatPage = lazy(() => import("../pages/chat/chat-detail.page.tsx"));
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -93,6 +96,10 @@ export const router = createBrowserRouter([
       {
         path: "brand/:id",
         Component: BrandEdit,
+      },
+      {
+        path: "chat",
+        Component: ChatPage,
       },
 
       {
