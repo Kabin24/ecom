@@ -3,7 +3,7 @@ export interface IImagedata {
   optimizedUrl: string;
 }
 
-export type IGetAllBannerProps = {
+export type IGetAllDataWithFilter = {
   page?: number;
   limit?: number;
   search?: string | null;

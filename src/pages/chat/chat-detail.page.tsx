@@ -3,12 +3,27 @@ import { Content } from "antd/es/layout/layout";
 import MessageBox from "./message-box.component";
 import SendMessage from "./send-message.component";
 import UserList from "./user-list.component";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../config/store";
+import { useEffect } from "react";
+import { getAllUsers } from "../../reducers/user.reducer";
 
 const ChatPage = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(
+      getAllUsers({
+        page: 1,
+        limit: 20,
+        search: null,
+      })
+    );
+  }, []);
   return (
     <>
       <Content className="m-3 bg-gray-50 h-fit flex">
-        <div className="w-1/4 bg-teal-100">
+        <div className="w-1/4 h-[550px] bg-teal-100 overflow-y-scroll">
           <div className="flex h-[50px] bg-teal-200 items-center justify-center shadow">
             <h1 className="text-2xl font-semibold font-sans">Chat</h1>
           </div>
