@@ -1,34 +1,39 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import chatSvc from "../services/chat.service";
 import { IGetAllDataWithFilter } from "../contracts/https-contracts";
-import { IResponseType } from "../services/http.service";
 
 export const getAllUsers = createAsyncThunk(
   "users/getAllUsers",
   async (query: IGetAllDataWithFilter) => {
-    try {
-      //api call
-      const response = await chatSvc.getRequest("/user", {
-        params: {
-          search: query?.search || null,
-          page: query?.page || 1,
-          limit: query?.limit || 20,
-        },
-      });
+    const response = await chatSvc.getRequest("/user", {
+      params: {
+        search: query?.search || null,
+        page: query?.page || 1,
+        limit: query?.limit || 20,
+      },
+    });
 
-      console.log(response);
-      return response;
-    } catch (exception) {
-      throw exception;
-    }
+    return response;
+  }
+);
+
+export type UserQueryType = {
+  id: string;
+};
+export const getUserDetail = createAsyncThunk(
+  "user/getUserDetail",
+  async (query: UserQueryType) => {
+    const detail = await chatSvc.getRequest("/user/" + query.id);
+
+    return detail.result.data;
   }
 );
 
 const UserSlicer = createSlice({
   name: "user",
   initialState: {
-    userDetail: {},
-    userList: null,
+    userDetail: null,
+    userList: [],
     userPagination: {
       limit: 20,
       page: 1,
@@ -37,23 +42,28 @@ const UserSlicer = createSlice({
     },
   },
   reducers: {
-    sayHeloo: (state, action) => {
+    setActiveUser: (state, action) => {
       state.userDetail = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(getAllUsers.fulfilled, (state, action) => {
       const payload = action.payload.result;
-      state.userList = payload.data;
+
+      state.userList =
+        state.userList && state.userList.length > 0
+          ? [...state.userList, ...payload.data]
+          : payload.data;
+
       state.userPagination = {
         ...payload.options.pagination,
         totalPages: Math.ceil(
-          payload.options.pagination.tota / payload.options.pagination.limit
+          payload.options.pagination.total / payload.options.pagination.limit
         ),
       };
     });
     builder.addCase(getAllUsers.rejected, (state, _action) => {
-      state.userList = null;
+      state.userList = [];
       state.userPagination = {
         limit: 20,
         page: 1,
@@ -61,8 +71,16 @@ const UserSlicer = createSlice({
         totalPages: 1,
       };
     });
+
+    builder.addCase(getUserDetail.fulfilled, (state, action) => {
+      state.userDetail = action.payload;
+    });
+
+    builder.addCase(getUserDetail.rejected, (state, _action) => {
+      state.userDetail = null;
+    });
   },
 });
 
-export const { sayHeloo } = UserSlicer.actions;
+export const { setActiveUser } = UserSlicer.actions;
 export default UserSlicer.reducer;

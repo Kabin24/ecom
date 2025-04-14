@@ -7,9 +7,9 @@ import { Provider } from "react-redux";
 import store from "./config/store";
 
 createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <RouterConfig />
-    </Provider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <Provider store={store}>
+    <RouterConfig />
+  </Provider>
+  // </React.StrictMode>
 );
