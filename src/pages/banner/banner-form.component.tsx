@@ -6,7 +6,7 @@ import {
   SingleImageUploader,
   SubmitButton,
   TextInputComponentHook,
-} from "../../components/form/input.components";
+} from "../../components/header/form/input.components";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Spin } from "antd";

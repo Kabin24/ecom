@@ -56,7 +56,7 @@ const Register = () => {
       gender: "",
       address: "",
       phone: "",
-      image: "",
+      image: {},
     },
     resolver: yupResolver(RegisterDTO),
   });

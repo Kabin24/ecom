@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 import { lazy, Suspense } from "react";
 import { Spin } from "antd";
 
+const HomePage = lazy(() => import("../pages/home/home.page.tsx"));
 const LoginPage = lazy(() => import("../pages/login/login.page.tsx"));
 const ForgetPassword = lazy(
   () => import("../pages/auth/forget-password/forget-password.page.tsx")
@@ -35,6 +36,10 @@ const ChatPage = lazy(() => import("../pages/chat/chat-detail.page.tsx"));
 export const router = createBrowserRouter([
   {
     path: "/",
+    Component: HomePage,
+  },
+  {
+    path: "/login",
     element: (
       <Suspense fallback={<Spin fullscreen></Spin>}>
         <LoginPage></LoginPage>

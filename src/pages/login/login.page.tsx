@@ -5,7 +5,7 @@ import {
   PasswordInputComponent,
   SubmitButton,
   TextInputComponentHook,
-} from "../../components/form/input.components.tsx";
+} from "../../components/header/form/input.components.tsx";
 
 import { useForm } from "react-hook-form";
 import * as yup from "yup";

@@ -1,4 +1,5 @@
 import axiosInstance from "../config/axios.config";
+import { getFromLocalstorage } from "../utilities/helpers";
 
 export  interface IResult{
     data?:any,
@@ -33,13 +34,13 @@ abstract class HttpService {
         }
 
         //auth bearer
-        // if (config.auth) {
-        //     const token = getFromLocalstorage("accessToken");
-        //     this.#headers = {
-        //         ...this.#headers,
-        //      '   Authorization': "Bearer" + token,
-        //     };
-        // }
+        if (config.auth) {
+            const token = getFromLocalstorage("accessToken");
+            this.#headers = {
+                ...this.#headers,
+               Authorization: `Bearer ${token}`
+            };
+        }
         
         //params
         if (config.params) {
@@ -51,25 +52,27 @@ abstract class HttpService {
         };
     }
 
-    async getRequest(url: string, config: any = {}):Promise <IResponseType>{
+    getRequest = async (url: string, config: any = {}) => {
         try {
             this.#setConfig(config);
-            const { data, status } = await axiosInstance.get(url, this.#config)
+            const { data: responseData, status } = await axiosInstance.get(url, this.#config);
             return {
-                result: data,
+                result: responseData,
                 status: status
-            }
-        }
-        catch (exception:any) {
-            // todo : exception
-            console.log("Exception: ", exception);
+            };
+        } catch (error: any) {
+            console.error("GET Request Error:", {
+                url,
+                status: error.response?.status,
+                data: error.response?.data,
+                headers: error.config?.headers
+            });
             throw {
-                response:exception?.response?.data,
-                status:exception?.status
-
-            }
+                response: error.response?.data || error.message,
+                status: error.response?.status || 500
+            };
         }
-    }
+    };
     async postRequest(url: string, data: any, config: any = {}):Promise<IResponseType> {
         try {
             //sets the headers and params
